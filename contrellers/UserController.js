@@ -76,6 +76,45 @@ userController.getUserById = async(req, res)=>{
         })
 
     }
+};
+
+userController.update = async(req, res) => {
+    try{
+        const filter = {_id: req.params.id};
+        const update = {name: req.body.name, email: req.body.email, password: req.body.password};
+        await User.findOneAndUpdate(filter, update);
+        const userUpdated = await User.findOne(filter);
+        res.status(200).json({
+            success: true,
+            message: "User update success",
+            data: userUpdated
+        });    
+    }catch (error){
+        return res.status(404).json({
+            success: false,
+            message: "Error detected",
+            data: error?.message || error
+        })
+    }
+};
+
+userController.delete = async(req, res)=>{
+    try{
+        const id = req.params._id;
+        const userDeleted = await User.deleteOne(id);
+        return res.status(200).json({
+            success: true,
+            message: "Delete user successfully",
+            data: userDeleted
+            })
+    }catch (error){
+        return res.status(500).json({
+            success: false,
+            message: "Error detected",
+            data: error?.message || error
+        })
+    }
+
 }
 
 module.exports = userController;
