@@ -1,7 +1,8 @@
 const express = require("express");
 const db = require("./config/database");
 const User = require("./models/User");
-const userRoutes = require('./routes/user.routes')
+const userRoutes = require('./routes/user.routes');
+const authRoutes = require("./routes/auth.routes")
 require("dotenv").config();
 
 const app = express();
@@ -9,7 +10,9 @@ app.use(express.json());
 const port = process.env.PORT || 4000;
 
 //routes
-app.use('/api', userRoutes);
+app.use("/api", userRoutes);
+//otra manera de importar routes
+app.use("/api", authRoutes);
 
 app.get("/", (req, res)=>{
     return res.send("Bienvenidos a mi aplicacion de tareas")

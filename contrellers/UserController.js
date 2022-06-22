@@ -20,30 +20,6 @@ userController.getAll = async (req, res) => {
     }
 };
 
-userController.post = async (req, res) => {
-    try {
-        const {name, email, password} = req.body;
-
-        //<------- Otra forma de hacerlo ------>
-        // const name = req.body.name;
-        // const email = req.body.email;
-        // const password = req.body.password;
-
-        const newUser = {name, email, password};
-        await User.create(newUser);
-        return res.status(200).json({
-            success: true,
-            massage: 'Create user successfully'
-        })
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: 'Error creating users: ',
-            error: error?.message || error
-        })
-    }
-};
-
 userController.getUserById = async(req, res)=>{
     try {
         const {id} = req.params;
@@ -81,16 +57,31 @@ userController.getUserById = async(req, res)=>{
 userController.update = async(req, res) => {
     try{
         const filter = {_id: req.params.id};
-        const update = {name: req.body.name, email: req.body.email, password: req.body.password};
-        await User.findOneAndUpdate(filter, update);
-        const userUpdated = await User.findOne(filter);
-        res.status(200).json({
+
+        if(req.body.name === "" || req.body.name == null){
+            return res.status(400).json({
+                success: false,
+                message: "Campo name es obligatorio",                
+            })
+        }
+        
+        const update = {
+            name: req.body.name, 
+            // email: req.body.email, 
+            // password: req.body.password
+        };
+
+        const userUpdated = await User.findOneAndUpdate(filter, update, {new: true});
+        // const userUpdated = await User.findOne(filter);
+
+        return res.status(200).json({
             success: true,
             message: "User update success",
             data: userUpdated
         });    
     }catch (error){
-        return res.status(404).json({
+        console.log(error);
+        return res.status(500).json({
             success: false,
             message: "Error detected",
             data: error?.message || error
