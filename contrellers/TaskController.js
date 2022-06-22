@@ -55,4 +55,59 @@ taskController.create = async(req, res) =>{
     }
 }
 
+taskController.update = async(req, res) => {
+    try{
+        const filter = {_id: req.params.id};
+        
+        const update = {
+            name: req.body.name, 
+            // status: req.body.status,
+            // duration: req.body.duration,
+            // userId: req.body.userId
+        };
+        if(req.body.name === "" || req.body.name == null){
+            return res.status(400).json({
+                success: false,
+                message: "Campo name es obligatorio",                
+            })
+        }
+        
+            
+        const taskUpdated = await Task.findOneAndUpdate(filter, update, {new: true});
+        // const userUpdated = await User.findOne(filter);
+
+        return res.status(200).json({
+            success: true,
+            message: "Task update success",
+            data: taskUpdated
+        });    
+    }catch (error){
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error detected",
+            data: error?.message || error
+        })
+    }
+};
+
+taskController.delete = async(req, res)=>{
+    try{
+        const id = req.params._id;
+        const taskDeleted = await Task.deleteOne(id);
+        return res.status(200).json({
+            success: true,
+            message: "Delete task successfully",
+            data: taskDeleted
+            })
+    }catch (error){
+        return res.status(500).json({
+            success: false,
+            message: "Error detected",
+            data: error?.message || error
+        })
+    }
+
+}
+
 module.exports = taskController;
