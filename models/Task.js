@@ -6,9 +6,17 @@ const TaskSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    duration: Number,
-    date: Date
-});
+    status: Boolean,
+    duration: String,
+    userId: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    }]
+},  {
+    timestamps: true
+    }
+);
 
 const Task = mongoose.model('Task', TaskSchema);
 
