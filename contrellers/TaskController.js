@@ -107,8 +107,13 @@ taskController.update = async(req, res) => {
 
 taskController.delete = async(req, res)=>{
     try{
-        const id = req.params._id;
-        const taskDeleted = await Task.deleteOne(id);
+        const filter = {
+            _id: req.params._id,
+            userId: req.user_id
+        };
+        
+        const taskDeleted = await Task.findOneAndDelete(filter);
+
         return res.status(200).json({
             success: true,
             message: "Delete task successfully",
