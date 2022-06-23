@@ -29,6 +29,37 @@ taskController.getAll = async (req, res) => {
     }
 };
 
+taskController.getById = async (req, res) => {
+
+    try {
+        const taskId = req.params.id;
+        const userId = req.user_id;
+        console.log(taskId);
+        console.log(userId);
+        const tasks = await Task.findOne({_id: taskId, userId: userId})
+
+        // if(tasks.length === 0){
+        //     return res.status(200).json({
+        //         success: true,
+        //         message: "You don't have already tasks"
+        //     })
+        // }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Get all tasks retrivered successfully',
+            data: tasks
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Error retriving tasks: ',
+            error: error.message
+        })
+    }
+};
+
 taskController.create = async(req, res) =>{
     try {
         const {name, duration} = req.body;
@@ -44,7 +75,7 @@ taskController.create = async(req, res) =>{
         const newTask = {
             name,            
             duration,
-            userId
+            userId: req.user_id
         };
 
         await Task.create(newTask);     
