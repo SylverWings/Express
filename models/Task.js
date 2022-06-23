@@ -6,7 +6,10 @@ const TaskSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    status: Boolean,
+    status: {
+        type: Boolean,
+        default: false
+    },
     duration: String,
     userId: [{
         type: mongoose.Schema.Types.ObjectId,
