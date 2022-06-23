@@ -4,7 +4,9 @@ const taskController = {};
 taskController.getAll = async (req, res) => {
 
     try {
-        const tasks = await Task.find()     
+        const userId = req.user_id;
+        const tasks = await Task.find({userId}).populate("userId", ["-password"]);
+
         return res.status(200).json({
             success: true,
             message: 'Get all tasks retrivered successfully',
@@ -22,18 +24,18 @@ taskController.getAll = async (req, res) => {
 
 taskController.create = async(req, res) =>{
     try {
-        const {name, status, duration, userId} = req.body;
+        const {name, duration} = req.body;
+        const userId = req.user_id;
 
-        if(!name || !status || !duration || !userId){
+        if(!name || !duration){
             return res.status(400).json({
                 success: false,
-                message: "Name, status, duration and userId are required"
+                message: "Name and duration are required"
             })
         };
         
         const newTask = {
-            name, 
-            status,
+            name,            
             duration,
             userId
         };
