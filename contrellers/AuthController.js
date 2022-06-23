@@ -97,7 +97,7 @@ authController.login = async(req, res) =>{
 authController.profile = async(req, res) =>{
     try {
         const userId = req.user_id;
-        const user = await User.findOne(userId)
+        const user = await User.findOne({_id: userId});
 
         return res.status(200).json({
             success: true,
