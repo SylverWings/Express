@@ -7,6 +7,13 @@ taskController.getAll = async (req, res) => {
         const userId = req.user_id;
         const tasks = await Task.find({userId}).populate("userId", ["-password"]);
 
+        if(tasks.length === 0){
+            return res.status(200).json({
+                success: true,
+                message: "You don't have already tasks"
+            })
+        }
+
         return res.status(200).json({
             success: true,
             message: 'Get all tasks retrivered successfully',
@@ -59,36 +66,41 @@ taskController.create = async(req, res) =>{
 
 taskController.update = async(req, res) => {
     try{
-        const filter = {_id: req.params.id};
+        const filter = {
+            _id: req.params.id,
+            userId: req.user_id
+        };
         
         const update = {
             name: req.body.name, 
-            // status: req.body.status,
-            // duration: req.body.duration,
-            // userId: req.body.userId
+            status: req.body.status            
+            // duration: req.body.duration,           
         };
-        if(req.body.name === "" || req.body.name == null){
-            return res.status(400).json({
-                success: false,
-                message: "Campo name es obligatorio",                
+        // if(req.body.name === "" || req.body.name == null){
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "Campo name es obligatorio",                
+        //     })
+        // }
+                    
+        const taskUpdated = await Task.findOneAndUpdate(filter, update, {new: true});   
+        if(!taskUpdated){
+            return res.status(200).json({
+                success: true,
+                message: "Task doesn't exists"
             })
         }
-        
-            
-        const taskUpdated = await Task.findOneAndUpdate(filter, update, {new: true});
-        // const userUpdated = await User.findOne(filter);
 
         return res.status(200).json({
             success: true,
             message: "Task update success",
             data: taskUpdated
         });    
-    }catch (error){
-        console.log(error);
+    }catch (error){        
         return res.status(500).json({
             success: false,
             message: "Error detected",
-            data: error?.message || error
+            error: error?.message || error
         })
     }
 };

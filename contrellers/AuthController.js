@@ -23,8 +23,7 @@ authController.register = async (req, res) => {
         //<---------- codificar password ------->
         const salt = bcrypt.genSaltSync(10);
         const encryptPassword = await bcrypt.hash(password, salt);
-        console.log(encryptPassword);
-
+        
         const newUser = {
             name, 
             email, 
